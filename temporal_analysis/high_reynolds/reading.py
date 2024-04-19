@@ -42,7 +42,7 @@ fig, ax = plt.subplots(figsize=(8, 4))
 ax.axis('off')
 ax.axis('tight')
 ax.table(cellText=df.values, colLabels=df.columns, loc='center')
-plt.title('Results')
+plt.title('High Reynolds Experiment 1 Results')
 plt.savefig('results_table.png')
 plt.show()
 
