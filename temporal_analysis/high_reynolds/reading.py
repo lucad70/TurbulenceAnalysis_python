@@ -25,14 +25,14 @@ hre1.process()
 import matplotlib.pyplot as plt
 
 results = {
-    "Mean Average": hre1.mean_average,
-    "Variance": hre1.variance,
-    "Standard Deviation": hre1.standard_deviation,
-    "Turbulent Kinetic Energy": hre1.turbulent_kinetic_energy,
-    "Turbulent Intensity": hre1.turbulent_intensity,
-    "Reynolds Number": hre1.reynolds_number,
-    "Coefficient of Kurtosis": hre1.coefficient_of_kurtosis,
-    "Coefficient of Skewness": hre1.coefficient_of_skewness
+    "Mean Average": round(hre1.mean_average, 2),
+    "Variance": round(hre1.variance, 2),
+    "Standard Deviation": round(hre1.standard_deviation, 2),
+    "Turbulent Kinetic Energy": round(hre1.turbulent_kinetic_energy, 2),
+    "Turbulent Intensity": round(hre1.turbulent_intensity, 2),
+    "Reynolds Number": round(hre1.reynolds_number, 2),
+    "Coefficient of Kurtosis": round(hre1.coefficient_of_kurtosis, 2),
+    "Coefficient of Skewness": round(hre1.coefficient_of_skewness, 2)
 }
 
 df = pd.DataFrame(results.items(), columns=["Parameter", "Value"])
