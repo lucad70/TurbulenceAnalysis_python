@@ -43,13 +43,12 @@ ax.axis('off')
 ax.axis('tight')
 ax.table(cellText=df.values, colLabels=df.columns, loc='center')
 plt.title('High Reynolds Experiment 1 Results')
-plt.savefig('results_table.png')
+plt.savefig('images/tables/results_table_hre1.png')
 plt.show()
 
 import matplotlib.pyplot as plt
-
 # Create a scatter plot of speed vs density probability
-plt.scatter(hre1.raw_speed, hre1.density_of_probability)
+plt.plot(hre1.raw_speed, hre1.density_of_probability)
 plt.xlabel('Speed')
 plt.ylabel('Density Probability')
 plt.title('Density Probability vs Speed')
@@ -63,6 +62,21 @@ y = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
 # Plot the Gaussian density of probability
 plt.plot(x, y, color='red', label='Density of Probability')
 
+
 plt.legend()
+
+# Save the plot image
+plt.savefig('images/plots/hre1_density_probability_plot.png')
+
+plt.show()
+
+# Create a scatter plot of raw_time vs raw_speed
+plt.scatter(hre1.raw_time, hre1.raw_speed, s=1)
+plt.xlabel('Time')
+plt.ylabel('Speed')
+plt.title('Raw Speed vs Raw Time')
+
+# Save the plot image with higher resolution
+plt.savefig('images/plots/hre1_raw_speed_time_plot.png', dpi=300)
 
 plt.show()
