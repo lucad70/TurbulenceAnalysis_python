@@ -1,7 +1,7 @@
 import matplotlib
 from output_fn import plot_density_probability, plot_raw_speed_time, plot_table
 from processing_fn import probabilistic, temporal
-from reading_fn import read_data
+from reading_fn import clean_subs_suffix, read_data, read_perf_files
 
 def temporal_analysis(folder_path):
     dat_files = read_data(folder_path)
@@ -40,28 +40,33 @@ def probabilistic_analysis(folder_path):
     plot_density_probability(experimental_data_prob, 'probabilistic')
     plot_raw_speed_time(experimental_data_prob, 'probabilistic')
     
-def temporal_analysis_main():
+def profile_analysis(folder_path):
+    dat_files = read_perf_files(folder_path)
+    processed_data = temporal(folder_path, dat_files)
+
+def temporal_main():
     folder_paths = ['data_from_experiment/re_temp/hre', 'data_from_experiment/re_temp/lre']
     for folder_path in folder_paths:
         temporal_analysis(folder_path)
 
-def probabilistic_analysis_main():
+def probabilistic_main():
     folder_paths = ['data_from_experiment/hre_prob']
     for folder_path in folder_paths:
         probabilistic_analysis(folder_path)
 
-def profile_analysis():
-    folder_paths = ['data_from_experiment/perfil']
-    for folder_path in folder_paths:
-        main(folder_path)
+def profile_main():
+    clean_subs_suffix('data_from_experiment/perfil/perfil_jus/PERFILM.W17')
+    #folder_paths = ['data_from_experiment/perfil/perfil_jus', 'data_from_experiment/perfil/perfil_mon']
+    #for folder_path in folder_paths:
+    #    profile_analysis(folder_path)
 
 def main():
-    temporal_analysis_main()
-    probabilistic_analysis_main()
-    profile_analysis()
+    temporal_main()
+    probabilistic_main()
+    profile_main()
 
 if __name__ == "__main__":
     # Call the main function for each program
-    temporal_analysis_main()
-    probabilistic_analysis_main()
-    profile_analysis()
+    temporal_main()
+    probabilistic_main()
+    profile_main()

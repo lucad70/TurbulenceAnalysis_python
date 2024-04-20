@@ -18,5 +18,7 @@ def read_perf_files(folder_path):
 
 def clean_subs_suffix(file):
     file_name, file_extension = os.path.splitext(file)
-    new_file_name = file_name.replace('.', '_') + '.dat'
+    file_extension = file_extension[1:]
+    new_file_name = file_name + '_' + file_extension + '.dat'
     os.rename(file, new_file_name)
+
