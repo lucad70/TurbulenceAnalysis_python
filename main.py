@@ -40,7 +40,5 @@ def main(folder_path):
 if __name__ == "__main__":
     # Call the main function for each program
     temporal_analysis()
-
     probabilistic_analysis()
     profile_analysis()
-    matplotlib.pyplot.close()
