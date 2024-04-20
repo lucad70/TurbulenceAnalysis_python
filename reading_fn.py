@@ -46,7 +46,6 @@ def plot_table(results, filename):
     ax.table(cellText=df.values, colLabels=df.columns, loc='center')
     plt.title(f'Experiment Results - {filename}')
     plt.savefig(f'images/tables/results_table_{filename}.png')
-    plt.show()
 
 def plot_density_probability(experimental_data, filename):
     """
@@ -64,7 +63,6 @@ def plot_density_probability(experimental_data, filename):
     plt.title(f'Experiment Results - {filename} - Density of Probability')
     plt.legend()
     plt.savefig(f'images/plots/{filename}_density_probability_plot.png')
-    plt.show()
 
 def plot_raw_speed_time(experimental_data, filename):
     """
@@ -79,7 +77,6 @@ def plot_raw_speed_time(experimental_data, filename):
     plt.ylabel('Speed')
     plt.title(f'Experiment Results - {filename} - Raw Speed vs Raw Time')
     plt.savefig(f'images/plots/{filename}_raw_speed_time_plot.png', dpi=300)
-    plt.show()
 
 def main(folder_path):
     processed_data = read_data(folder_path)
@@ -101,6 +98,6 @@ def main(folder_path):
 
 if __name__ == "__main__":
     # Call the main function for each program
-    folder_paths = ['data_from_experiment/re_temp/hre']
+    folder_paths = ['data_from_experiment/re_temp']
     for folder_path in folder_paths:
         main(folder_path)
