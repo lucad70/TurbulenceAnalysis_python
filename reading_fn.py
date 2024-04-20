@@ -12,7 +12,7 @@ def read_data(folder_path):
     return dat_files
 
 def read_perf_files(folder_path):
-    for files in folder_path: clean_subs_suffix(folder_path)
+    for file in folder_path: clean_subs_suffix(file)
     dat_files = [file for file in os.listdir(folder_path) if file.endswith('.dat')]
     return dat_files
 
