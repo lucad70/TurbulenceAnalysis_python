@@ -1,9 +1,11 @@
 from output_fn import plot_density_probability, plot_raw_speed_time, plot_table
+from processing_fn import process_data
 from reading_fn import read_data
 
 
 def main(folder_path):
-    processed_data = read_data(folder_path)
+    dat_files = read_data(folder_path)
+    processed_data = process_data(folder_path, dat_files)
 
     for file, experimental_data in processed_data.items():
         results = {
