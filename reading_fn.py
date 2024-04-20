@@ -8,16 +8,6 @@ from scipy.stats import linregress
 import matplotlib.pyplot as plt
 
 def read_data(folder_path):
-    """
-    Read data from .dat files in the specified folder.
-
-    Args:
-    - folder_path (str): Path to the folder containing .dat files.
-
-    Returns:
-    - dict: Dictionary containing ExperimentalData objects with filenames as keys.
-    """
     dat_files = [file for file in os.listdir(folder_path) if file.endswith('.dat')]
-
     return dat_files
 
