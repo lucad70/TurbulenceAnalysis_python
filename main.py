@@ -1,3 +1,4 @@
+import os
 import matplotlib
 from output_fn import plot_density_probability, plot_raw_speed_time, plot_table
 from processing_fn import probabilistic, temporal
@@ -55,10 +56,9 @@ def probabilistic_main():
         probabilistic_analysis(folder_path)
 
 def profile_main():
-    clean_subs_suffix('data_from_experiment/perfil/perfil_jus/PERFILM.W17')
-    #folder_paths = ['data_from_experiment/perfil/perfil_jus', 'data_from_experiment/perfil/perfil_mon']
-    #for folder_path in folder_paths:
-    #    profile_analysis(folder_path)
+    folder_paths = ['data_from_experiment/perfil/perfil_jus', 'data_from_experiment/perfil/perfil_mon']
+    for folder_path in folder_paths:
+        profile_analysis(folder_path)
 
 def main():
     temporal_main()
@@ -69,4 +69,4 @@ if __name__ == "__main__":
     # Call the main function for each program
     temporal_main()
     probabilistic_main()
-    profile_main()
+    #profile_main()
