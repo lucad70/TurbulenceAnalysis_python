@@ -1,7 +1,22 @@
+import matplotlib
 from output_fn import plot_density_probability, plot_raw_speed_time, plot_table
 from processing_fn import process_data
 from reading_fn import read_data
 
+def temporal_analysis():
+    folder_paths = ['data_from_experiment/re_temp/hre', 'data_from_experiment/re_temp/lre']
+    for folder_path in folder_paths:
+        main(folder_path)
+
+def probabilistic_analysis():
+    folder_paths = ['data_from_experiment/hre_prob']
+    for folder_path in folder_paths:
+        main(folder_path)
+
+def profile_analysis():
+    folder_paths = ['data_from_experiment/perfil']
+    for folder_path in folder_paths:
+        main(folder_path)
 
 def main(folder_path):
     dat_files = read_data(folder_path)
@@ -24,6 +39,8 @@ def main(folder_path):
 
 if __name__ == "__main__":
     # Call the main function for each program
-    folder_paths = ['data_from_experiment/re_temp/hre']
-    for folder_path in folder_paths:
-        main(folder_path)
+    temporal_analysis()
+
+    probabilistic_analysis()
+    profile_analysis()
+    matplotlib.pyplot.close()
