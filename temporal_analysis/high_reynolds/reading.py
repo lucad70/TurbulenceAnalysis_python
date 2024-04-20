@@ -13,7 +13,7 @@ folder_path = 'data_from_experiment/re_temp/hre'
 
 # Get a list of all .dat files in the folder
 dat_files = [file for file in os.listdir(folder_path) if file.endswith('.dat')]
-
+processed_data = {}
 # Loop through each .dat file
 for file in dat_files:
     # Define the file path
@@ -30,7 +30,10 @@ for file in dat_files:
     # Create an instance of the ExperimentalData class
     experimental_data = ExperimentalData(file, time, speed_inst, typical_dimension)
     experimental_data.process()
+    processed_data[file] = experimental_data
 
+for file in processed_data:
+    experimental_data = processed_data[file]
     # Print the results as a table
     results = {
         "Mean Average": round(experimental_data.mean_average, 2),
@@ -54,6 +57,8 @@ for file in dat_files:
     plt.savefig(f'images/tables/results_table_{file}.png')
     plt.show()
 
+for file in processed_data:
+    experimental_data = processed_data[file]
     # Calculate the Gaussian density of probability
     mu = experimental_data.mean_average
     sigma = experimental_data.standard_deviation
@@ -70,7 +75,8 @@ for file in dat_files:
 
     plt.show()
 
-
+for file in processed_data:
+    experimental_data = processed_data[file]
     # Create a scatter plot of raw_time vs raw_speed
     plt.plot(experimental_data.raw_time, experimental_data.raw_speed)
     plt.xlabel('Time')
