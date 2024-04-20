@@ -21,6 +21,8 @@ class ExperimentalData:
         self.coefficient_of_skewness = 0.0
         self.density_of_probability = []
 
+    
+
     def process(self):
         self.calculate_mean_average()
         self.calculate_fluctuation()
@@ -82,3 +84,5 @@ class ExperimentalData:
         probability_density = [self.density_of_probability_for_x(x) for x in self.raw_speed]
         self.density_of_probability = probability_density
 
+def mean(numbers):
+    return sum(numbers) / len(numbers)
