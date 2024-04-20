@@ -44,7 +44,7 @@ def plot_table(results, filename):
     ax.axis('off')
     ax.axis('tight')
     ax.table(cellText=df.values, colLabels=df.columns, loc='center')
-    plt.title(f'High Reynolds Experiment Results - {filename}')
+    plt.title(f'Experiment Results - {filename}')
     plt.savefig(f'images/tables/results_table_{filename}.png')
     plt.show()
 
@@ -61,7 +61,7 @@ def plot_density_probability(experimental_data, filename):
     x = np.linspace(min(experimental_data.raw_speed), max(experimental_data.raw_speed), 100)
     y = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
     plt.plot(x, y, color='red', label='Density of Probability')
-    plt.title(f'High Reynolds Experiment Results - {filename} - Density of Probability')
+    plt.title(f'Experiment Results - {filename} - Density of Probability')
     plt.legend()
     plt.savefig(f'images/plots/{filename}_density_probability_plot.png')
     plt.show()
@@ -77,7 +77,7 @@ def plot_raw_speed_time(experimental_data, filename):
     plt.plot(experimental_data.raw_time, experimental_data.raw_speed)
     plt.xlabel('Time')
     plt.ylabel('Speed')
-    plt.title(f'High Reynolds Experiment Results - {filename} - Raw Speed vs Raw Time')
+    plt.title(f'Experiment Results - {filename} - Raw Speed vs Raw Time')
     plt.savefig(f'images/plots/{filename}_raw_speed_time_plot.png', dpi=300)
     plt.show()
 
