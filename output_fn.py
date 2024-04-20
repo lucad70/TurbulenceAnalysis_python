@@ -25,7 +25,7 @@ def plot_table(results, filename):
     
 def plot_density_probability(experimental_data, filename):
     """
-    Plot Gaussian density of probability and save the image.
+    Plot density probability curves and save the image, comparing them with the corresponding Gaussian density probability distribution.
 
     Args:
     - experimental_data (ExperimentalData): ExperimentalData object.
@@ -35,7 +35,8 @@ def plot_density_probability(experimental_data, filename):
     sigma = experimental_data.standard_deviation
     x = np.linspace(min(experimental_data.raw_speed), max(experimental_data.raw_speed), 100)
     y = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
-    plt.plot(x, y, color='red', label='Density of Probability')
+    plt.plot(x, y, color='red', label='Gaussian Density of Probability')
+    plt.hist(experimental_data.raw_speed, density=True, bins=20, alpha=0.5, label='Experimental Density of Probability')
     plt.title(f'Experiment Results - {filename} - Density of Probability')
     plt.legend()
     plt.savefig(f'images/plots/{filename}_density_probability_plot.png')
