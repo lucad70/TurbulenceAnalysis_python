@@ -39,16 +39,15 @@ def probabilistic(processed_data):
 def profile(processed_data,folder_path):
     first_experimental_data = list(processed_data.values())[0]
     if folder_path == 'data_from_experiment/perfil/perfil_jus':
-        z_positions = [34.0, 34.5, 35.0, 35.5, 36.0, 37.0, 38.0, 40.0, 45.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0]
+        z_positions = [34.0, 36.0, 38.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0, 80.0, 85.0, 90.0, 95.0, 100.0, 105.0, 110.0]
+        description = 'Jusante'
     if folder_path == 'data_from_experiment/perfil/perfil_mon':
-        z_positions = [34.0, 36.0, 38.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0, 80.0, 85.0, 90.0, 95.0, 100.0, 105.0, 110.0] 
-    speeds = []
-    kinetic_energies = []
-    turbulent_intensities = []
-
+        z_positions = [34.0, 34.5, 35.0, 35.5, 36.0, 37.0, 38.0, 40.0, 45.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0] 
+        description = 'Montante'
+    experiment_profile = ExperimentalProfile(description)
+    experiment_profile.position = z_positions
     for file, experimental_data in processed_data.items():
-        speeds.append(experimental_data.mean_average)
-        turbulent_intensities.append(experimental_data.turbulent_intensity)
-
-    experiment_profile = ExperimentalProfile(folder_path, z_positions, speeds, kinetic_energies, turbulent_intensities)
+        experiment_profile.speed_profile.append(experimental_data.mean_average)
+        experiment_profile.turbulent_intensity_profile.append(experimental_data.turbulent_intensity)
+        
     return experiment_profile
