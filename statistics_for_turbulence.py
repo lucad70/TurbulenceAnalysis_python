@@ -9,7 +9,6 @@ class ExperimentalProfile:
         self.position = []
         self.speed_profile = []
         self.turbulent_intensity_profile = []
-        self.turbulent_kinetic_energy_profile = []
 
 class ExperimentalData:
     def __init__(self, description, raw_time, raw_speed, typical_dimension):
