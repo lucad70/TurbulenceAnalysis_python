@@ -44,7 +44,12 @@ def probabilistic_analysis(folder_path):
 def profile_analysis(folder_path):
     dat_files = read_perf_files(folder_path)
     processed_data = temporal(folder_path, dat_files)
-
+    profile = profile(processed_data, folder_path)
+    
+    #speed profile
+    plot_profile_speed(profile.speed, profile.z_positions, folder_path)
+    plot_profile_turbulent_intensity(profile.turbulent_intensity, profile.z_positions, folder_path)
+    
 def temporal_main():
     folder_paths = ['data_from_experiment/re_temp/hre', 'data_from_experiment/re_temp/lre']
     for folder_path in folder_paths:
