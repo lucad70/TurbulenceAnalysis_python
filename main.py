@@ -1,8 +1,8 @@
 import os
 import matplotlib
-from output_fn import plot_density_probability, plot_raw_speed_time, plot_table
-from processing_fn import probabilistic, temporal
-from reading_fn import clean_subs_suffix, read_data, read_perf_files
+from output_fn import plot_density_probability, plot_profile_speed, plot_profile_turbulent_intensity, plot_raw_speed_time, plot_table
+from processing_fn import probabilistic, temporal, profile
+from reading_fn import read_data
 
 def temporal_analysis(folder_path):
     dat_files = read_data(folder_path)
@@ -42,14 +42,14 @@ def probabilistic_analysis(folder_path):
     plot_raw_speed_time(experimental_data_prob, 'probabilistic')
     
 def profile_analysis(folder_path):
-    dat_files = read_perf_files(folder_path)
+    dat_files = read_data(folder_path)
     processed_data = temporal(folder_path, dat_files)
-    profile = profile(processed_data, folder_path)
+    profile_result = profile(processed_data, folder_path)
     
     #speed profile
-    plot_profile_speed(profile.speed, profile.z_positions, folder_path)
-    plot_profile_turbulent_intensity(profile.turbulent_intensity, profile.z_positions, folder_path)
-    
+    plot_profile_speed(profile_result.speed_profile, profile_result.position, profile_result.description)
+    plot_profile_turbulent_intensity(profile_result.turbulent_intensity_profile, profile_result.position, profile_result.description)
+
 def temporal_main():
     folder_paths = ['data_from_experiment/re_temp/hre', 'data_from_experiment/re_temp/lre']
     for folder_path in folder_paths:
@@ -74,4 +74,4 @@ if __name__ == "__main__":
     # Call the main function for each program
     temporal_main()
     probabilistic_main()
-    #profile_main()
+    profile_main()
