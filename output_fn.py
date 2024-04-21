@@ -56,3 +56,37 @@ def plot_raw_speed_time(experimental_data, filename):
     plt.title(f'Experiment Results - {filename} - Raw Speed vs Raw Time')
     plt.savefig(f'images/plots/{filename}_raw_speed_time_plot.png', dpi=300)
     plt.close()
+
+def plot_profile_speed(speed, z_positions, description):
+    """
+    Plot speed profile and save the image.
+
+    Args:
+    - speed (list): List of speeds.
+    - z_positions (list): List of z positions.
+    - folder_path (str): Folder path.
+    """
+    plt.plot(speed, z_positions)
+    plt.scatter(speed, z_positions)
+    plt.xlabel('Speed')
+    plt.ylabel('Z Positions')
+    plt.title(f'Experiment Results - {description} - Speed Profile')
+    plt.savefig(f'images/plots/{description}_speed_profile_plot.png')
+    plt.close()
+
+def plot_profile_turbulent_intensity(turbulent_intensity, z_positions, description):
+    """
+    Plot turbulent intensity profile and save the image.
+
+    Args:
+    - turbulent_intensity (list): List of turbulent intensities.
+    - z_positions (list): List of z positions.
+    - folder_path (str): Folder path.
+    """
+    plt.scatter(turbulent_intensity, z_positions)
+    plt.plot(turbulent_intensity, z_positions)
+    plt.xlabel('Turbulent Intensity')
+    plt.ylabel('Z Positions')
+    plt.title(f'Experiment Results - {description} - Turbulent Intensity Profile')
+    plt.savefig(f'images/plots/{description}_turbulent_intensity_profile_plot.png')
+    plt.close()
