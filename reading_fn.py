@@ -11,14 +11,5 @@ def read_data(folder_path):
     dat_files = [file for file in os.listdir(folder_path) if file.endswith('.dat')]
     return dat_files
 
-def read_perf_files(folder_path):
-    for file in folder_path: clean_subs_suffix(file)
-    dat_files = [file for file in os.listdir(folder_path) if file.endswith('.dat')]
-    return dat_files
 
-def clean_subs_suffix(file):
-    file_name, file_extension = os.path.splitext(file)
-    file_extension = file_extension[1:]
-    new_file_name = file_name + '_' + file_extension + '.dat'
-    os.rename(file, new_file_name)
 
