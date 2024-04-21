@@ -3,6 +3,13 @@ import math
 AIR_DENSITY = 1.204  # kg/m³
 AIR_VISCOSITY = 1.7894e-5  # kg/m.s
 
+class ExperimentalProfile:
+    def __init__(self, description):
+        self.description = description
+        self.position = []
+        self.speed_profile = []
+        self.turbulent_intensity_profile = []
+        self.turbulent_kinetic_energy_profile = []
 
 class ExperimentalData:
     def __init__(self, description, raw_time, raw_speed, typical_dimension):
