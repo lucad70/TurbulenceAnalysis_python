@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from statistics_for_turbulence import ExperimentalData, mean
+from statistics_for_turbulence import ExperimentalData, ExperimentalProfile, mean
 
 def temporal(folder_path, dat_files):
     processed_data = {}
@@ -35,3 +35,17 @@ def probabilistic(processed_data):
     
     experimental_data_prob.process()
     return experimental_data_prob
+
+def profile(processed_data,folder_path):
+    first_experimental_data = list(processed_data.values())[0]
+    z_positions = []
+    speeds = []
+    kinetic_energies = []
+    turbulent_intensities = []
+
+    for file, experimental_data in processed_data.items():
+        speeds.append(experimental_data.mean_average)
+        kinetic_energies.append(experimental_data.turbulent_kinetic_energy)
+        turbulent_intensities.append(experimental_data.turbulent_intensity)
+
+    experiment_profile = ExperimentalProfile(folder_path, z_positions, speeds, kinetic_energies, turbulent_intensities)
