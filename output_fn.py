@@ -43,7 +43,8 @@ def plot_density_probability(experimental_data, filename):
     plt.xlabel('Velocidade (m/s)')
     plt.ylabel('Contagem')
     plt.title(f'Resultados Experimentais - {filename} - Densidade de Probabilidade')
-    plt.legend()
+    plt.legend(loc='upper right', shadow=True, ncol=1, fontsize = 'small')
+    #plt.tight_layout()
     plt.savefig(f'images/plots/{filename}_density_probability_plot.png')
     plt.close()
 
