@@ -1,0 +1,432 @@
+
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/output_fn.py
+
+import os
+import pandas as pd
+import sys
+import numpy as np
+from statistics_for_turbulence import ExperimentalData
+from scipy.stats import linregress
+import matplotlib.pyplot as plt
+
+def plot_table(results, filename):
+    """
+    Plot the results as a table and save the image.
+
+    Args:
+    - results (dict): Dictionary containing results to be plotted.
+    - filename (str): Name of the file for saving the plot.
+    """
+    df = pd.DataFrame(results.items(), columns=["Parameter", "Value"])
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.axis('off')
+    ax.axis('tight')
+    ax.table(cellText=df.values, colLabels=df.columns, loc='center')
+    plt.title(f'Experiment Results - {filename}')
+    plt.savefig(f'images/tables/results_table_{filename}.png')
+    plt.close()
+    
+def plot_density_probability(experimental_data, filename):
+    """
+    Plot density probability curves and save the image, comparing them with the corresponding Gaussian density probability distribution.
+
+    Args:
+    - experimental_data (ExperimentalData): ExperimentalData object.
+    - filename (str): Name of the file for saving the plot.
+    """
+    mu = experimental_data.mean_average
+    sigma = experimental_data.standard_deviation
+    x = np.linspace(min(experimental_data.raw_speed), max(experimental_data.raw_speed), 100)
+    y = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
+    plt.plot(x, y, color='red', label='Densidade de Probabilidade')
+    sigma_normal = 1
+    y_normal = (1 / (sigma_normal * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma_normal) ** 2)
+    plt.plot(x, y_normal, color = 'green', label = 'Densidade Gaussiana Normal')
+    plt.hist(experimental_data.raw_speed, density=True, bins=20, alpha=0.5, label='Experimental Density of Probability')
+    plt.xlabel('Velocidade (m/s)')
+    plt.ylabel('Contagem')
+    plt.title(f'Resultados Experimentais - {filename} - Densidade de Probabilidade')
+    plt.legend(loc='upper right', shadow=True, ncol=1, fontsize = 'small')
+    #plt.tight_layout()
+    plt.savefig(f'images/plots/{filename}_density_probability_plot.png')
+    plt.close()
+
+def plot_raw_speed_time(experimental_data, filename):
+    """
+    Plot raw_time vs raw_speed and save the image.
+
+    Args:
+    - experimental_data (ExperimentalData): ExperimentalData object.
+    - filename (str): Name of the file for saving the plot.
+    """
+    plt.plot(experimental_data.raw_time, experimental_data.raw_speed)
+    plt.xlabel('Tempo (s)')
+    plt.ylabel('Velocidade (m/s)')
+    plt.title(f'EResultados Experimentais - {filename} - Tempo vs Velocidade')
+    plt.savefig(f'images/plots/{filename}_raw_speed_time_plot.png', dpi=300)
+    plt.close()
+
+def plot_profile_speed(speed, z_positions, description):
+    """
+    Plot speed profile and save the image.
+
+    Args:
+    - speed (list): List of speeds.
+    - z_positions (list): List of z positions.
+    - folder_path (str): Folder path.
+    """
+    plt.plot(speed, z_positions)
+    plt.scatter(speed, z_positions)
+    plt.xlabel('Velocidade (m/s)')
+    plt.ylabel('Altura z (cm)')
+    plt.title(f'Resultados Experimentais - {description} - Perfil de Velocidade')
+    plt.savefig(f'images/plots/{description}_speed_profile_plot.png')
+    plt.close()
+
+def plot_profile_turbulent_intensity(turbulent_intensity, z_positions, description):
+    """
+    Plot turbulent intensity profile and save the image.
+
+    Args:
+    - turbulent_intensity (list): List of turbulent intensities.
+    - z_positions (list): List of z positions.
+    - folder_path (str): Folder path.
+    """
+    plt.scatter(turbulent_intensity, z_positions)
+    plt.plot(turbulent_intensity, z_positions)
+    plt.xlabel('Intensidade Turbulenta (%)')
+    plt.ylabel('Altura em z (cm)')
+    plt.title(f'Resultados Experimentais - {description} - Perfil de Intensidade Turbulenta')
+    plt.savefig(f'images/plots/{description}_turbulent_intensity_profile_plot.png')
+    plt.close()
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/print_to_txt.py
+
+import os
+
+def merge_python_files_to_text(directory, output_file):
+    with open(output_file, 'w') as merged_file:
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                if file.endswith('.py'):
+                    file_path = os.path.join(root, file)
+                    with open(file_path, 'r') as f:
+                        file_content = f.read()
+                        merged_file.write(f"\n\n# File: {file_path}\n\n")
+                        merged_file.write(file_content)
+
+# Specify the directory of the cloned repository
+repository_directory = '/home/lucadg911/TurbulenceAnalysis_python'
+# Specify the path for the merged output file
+output_file = '/home/lucadg911/TurbulenceAnalysis_python/print.txt'
+
+merge_python_files_to_text(repository_directory, output_file)
+
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/processing_fn.py
+
+import os
+import pandas as pd
+from statistics_for_turbulence import ExperimentalData, ExperimentalProfile, mean
+
+def temporal(folder_path, dat_files):
+    processed_data = {}
+    
+    for file in dat_files:
+        file_path = os.path.join(folder_path, file)
+        data = pd.read_csv(file_path, delimiter='\s+', header=None)
+        time = data[0].tolist()
+        speed_inst = data[1].tolist()
+        typical_dimension = 0.05
+        experimental_data = ExperimentalData(file, time, speed_inst, typical_dimension)
+        experimental_data.process()
+        processed_data[file] = experimental_data
+    
+    return processed_data
+
+def probabilistic(processed_data):
+    first_experimental_data = list(processed_data.values())[0]
+    raw_speed = []
+    raw_time = first_experimental_data.raw_time
+    description = 'Probabilistic'
+    typical_dimension = 0.05
+    experimental_data_prob = ExperimentalData(description, raw_time, raw_speed, typical_dimension)
+    instant_speed = []
+
+    for file, experimental_data in processed_data.items():
+        instant_speed.append(experimental_data.raw_speed)
+    
+    grouped_elements = zip(*instant_speed)
+    statistical_speed = [mean(group) for group in grouped_elements]
+    experimental_data_prob.raw_speed = statistical_speed
+    
+    experimental_data_prob.process()
+    return experimental_data_prob
+
+def profile(processed_data,folder_path):
+    first_experimental_data = list(processed_data.values())[0]
+    if folder_path == 'data_from_experiment/perfil/perfil_jus':
+        z_positions = [34.0, 36.0, 38.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0, 80.0, 85.0, 90.0, 95.0, 100.0, 105.0, 110.0]
+        description = 'Jusante'
+    if folder_path == 'data_from_experiment/perfil/perfil_mon':
+        z_positions = [34.0, 34.5, 35.0, 35.5, 36.0, 37.0, 38.0, 40.0, 45.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0] 
+        description = 'Montante'
+    experiment_profile = ExperimentalProfile(description)
+    experiment_profile.position = z_positions
+    for file, experimental_data in processed_data.items():
+        experiment_profile.speed_profile.append(experimental_data.mean_average)
+        experiment_profile.turbulent_intensity_profile.append(experimental_data.turbulent_intensity)
+        
+    return experiment_profile
+
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/test_statistics_for_turbulence.py
+
+import unittest
+
+from statistics_for_turbulence import ExperimentalData
+
+class ExperimentalDataTests(unittest.TestCase):
+    def setUp(self):
+        # Set up the test data
+        self.raw_data = [1.0, 2.0, 3.0, 4.0, 5.0]
+        self.typical_dimension = 1.0
+        self.raw_time = []
+        self.data_processing = ExperimentalData("test", self.raw_time, self.raw_data.copy(), self.typical_dimension)
+        self.data_processing.process()
+
+    def test_mean_average(self):
+        self.assertEqual(self.data_processing.mean_average, 3.0)
+
+    def test_fluctuation(self):
+        expected_fluctuation = [-2.0, -1.0, 0.0, 1.0, 2.0]
+        self.assertEqual(self.data_processing.fluctuation, expected_fluctuation)
+
+    def test_variance(self):
+        self.assertEqual(self.data_processing.variance, 2.0)
+
+    def test_standard_deviation(self):
+        self.assertAlmostEqual(self.data_processing.standard_deviation, 1.4142135623730951)
+
+    def test_turbulent_kinetic_energy(self):
+        self.assertEqual(self.data_processing.turbulent_kinetic_energy, 1.0)
+
+if __name__ == "__main__":
+    unittest.main()
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/statistics_for_turbulence.py
+
+import math
+
+AIR_DENSITY = 1.204  # kg/m³
+AIR_VISCOSITY = 1.7894e-5  # kg/m.s
+
+class ExperimentalProfile:
+    def __init__(self, description):
+        self.description = description
+        self.position = []
+        self.speed_profile = []
+        self.turbulent_intensity_profile = []
+
+class ExperimentalData:
+    def __init__(self, description, raw_time, raw_speed, typical_dimension):
+        self.description = description
+        self.raw_time = raw_time
+        self.raw_speed = raw_speed
+        self.typical_dimension = typical_dimension
+        self.mean_average = 0.0
+        self.fluctuation = []
+        self.variance = 0.0
+        self.standard_deviation = 0.0
+        self.turbulent_kinetic_energy = 0.0
+        self.turbulent_intensity = 0.0
+        self.reynolds_number = 0.0
+        self.coefficient_of_kurtosis = 0.0
+        self.coefficient_of_skewness = 0.0
+        self.density_of_probability = []
+
+    
+
+    def process(self):
+        self.calculate_mean_average()
+        self.calculate_fluctuation()
+        self.calculate_variance()
+        self.calculate_standard_deviation()
+        self.calculate_turbulent_kinetic_energy()
+        self.calculate_turbulent_intensity()
+        self.calculate_coefficient_of_kurtosis()
+        self.calculate_coefficient_of_skewness()
+        self.calculate_reynolds_number()
+        self.calculate_density_of_probability()
+
+    def calculate_mean_average(self):
+        self.mean_average = sum(self.raw_speed) / len(self.raw_speed)
+
+    def calculate_fluctuation(self):
+        self.fluctuation = [value - self.mean_average for value in self.raw_speed]
+
+    def calculate_variance(self):
+        self.variance = sum([(x - self.mean_average) ** 2 for x in self.raw_speed]) / len(self.raw_speed)
+
+    def calculate_standard_deviation(self):
+        self.standard_deviation = math.sqrt(self.variance)
+
+    def calculate_turbulent_kinetic_energy(self):
+        self.turbulent_kinetic_energy = 0.5 * self.variance
+
+    def calculate_turbulent_intensity(self):
+        self.turbulent_intensity = self.standard_deviation / abs(self.mean_average)
+
+    def calculate_coefficient_of_kurtosis(self):
+        numerator = sum([(x - self.mean_average) ** 4 for x in self.raw_speed]) / len(self.raw_speed)
+        denominator = self.variance ** 2
+        self.coefficient_of_kurtosis = numerator / denominator
+
+    def calculate_coefficient_of_skewness(self):
+        numerator = sum([(x - self.mean_average) ** 3 for x in self.raw_speed]) / len(self.raw_speed)
+        denominator = self.variance ** 1.5
+        self.coefficient_of_skewness = numerator / denominator
+
+    def calculate_reynolds_number(self):
+        self.reynolds_number = AIR_DENSITY * self.mean_average * self.typical_dimension / AIR_VISCOSITY
+
+    def covariance(self, other):
+        return sum([x * y for x, y in zip(self.fluctuation, other.fluctuation)]) / len(self.raw_speed)
+
+    def correlation(self, other):
+        return self.covariance(other) / (self.standard_deviation * other.standard_deviation)
+
+    def density_of_probability_for_x(self, x):
+        lambda_numerator = (x - self.mean_average) ** 2
+        lambda_denominator = 2.0 * self.variance
+        lambda_value = lambda_numerator / lambda_denominator
+        denominator = self.standard_deviation * math.sqrt(2.0 * math.pi)
+        probability = math.exp(-lambda_value) / denominator
+        return probability
+
+    def calculate_density_of_probability(self):
+        probability_density = [self.density_of_probability_for_x(x) for x in self.raw_speed]
+        self.density_of_probability = probability_density
+
+def mean(numbers):
+    return sum(numbers) / len(numbers)
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/reading_fn.py
+
+import os
+import pandas as pd
+import sys
+import numpy as np
+from output_fn import plot_density_probability, plot_raw_speed_time, plot_table
+from statistics_for_turbulence import ExperimentalData
+from scipy.stats import linregress
+import matplotlib.pyplot as plt
+
+def read_data(folder_path):
+    dat_files = [file for file in os.listdir(folder_path) if file.endswith('.dat')]
+    return dat_files
+
+
+
+
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/main.py
+
+import os
+import matplotlib
+from output_fn import plot_density_probability, plot_profile_speed, plot_profile_turbulent_intensity, plot_raw_speed_time, plot_table
+from processing_fn import probabilistic, temporal, profile
+from reading_fn import read_data
+
+def temporal_analysis(folder_path):
+    dat_files = read_data(folder_path)
+    processed_data = temporal(folder_path, dat_files)
+
+    for file, experimental_data in processed_data.items():
+        results = {
+            "Mean Average": round(experimental_data.mean_average, 2),
+            "Variance": round(experimental_data.variance, 2),
+            "Standard Deviation": round(experimental_data.standard_deviation, 2),
+            "Turbulent Kinetic Energy": round(experimental_data.turbulent_kinetic_energy, 2),
+            "Turbulent Intensity": round(experimental_data.turbulent_intensity, 2),
+            "Reynolds Number": round(experimental_data.reynolds_number, 2),
+            "Coefficient of Kurtosis": round(experimental_data.coefficient_of_kurtosis, 2),
+            "Coefficient of Skewness": round(experimental_data.coefficient_of_skewness, 2)
+        }
+        plot_table(results, file)
+        plot_density_probability(experimental_data, file)
+        plot_raw_speed_time(experimental_data, file)
+
+def probabilistic_analysis(folder_path):
+    dat_files = read_data(folder_path)
+    processed_data = temporal(folder_path, dat_files)
+    experimental_data_prob = probabilistic(processed_data)
+    results = {
+        "Mean Average": round(experimental_data_prob.mean_average, 2),
+        "Variance": round(experimental_data_prob.variance, 2),
+        "Standard Deviation": round(experimental_data_prob.standard_deviation, 2),
+        "Turbulent Kinetic Energy": round(experimental_data_prob.turbulent_kinetic_energy, 2),
+        "Turbulent Intensity": round(experimental_data_prob.turbulent_intensity, 2),
+        "Reynolds Number": round(experimental_data_prob.reynolds_number, 2),
+        "Coefficient of Kurtosis": round(experimental_data_prob.coefficient_of_kurtosis, 2),
+        "Coefficient of Skewness": round(experimental_data_prob.coefficient_of_skewness, 2)
+    }
+    plot_table(results, 'High Reynolds Statistics Point 5')
+    plot_density_probability(experimental_data_prob, 'probabilistic')
+    plot_raw_speed_time(experimental_data_prob, 'probabilistic')
+    
+def profile_analysis(folder_path):
+    dat_files = read_data(folder_path)
+    processed_data = temporal(folder_path, dat_files)
+    profile_result = profile(processed_data, folder_path)
+    
+    #speed profile
+    plot_profile_speed(profile_result.speed_profile, profile_result.position, profile_result.description)
+    plot_profile_turbulent_intensity(profile_result.turbulent_intensity_profile, profile_result.position, profile_result.description)
+
+def temporal_main():
+    folder_paths = ['data_from_experiment/re_temp/hre', 'data_from_experiment/re_temp/lre']
+    for folder_path in folder_paths:
+        temporal_analysis(folder_path)
+
+def probabilistic_main():
+    folder_paths = ['data_from_experiment/hre_prob']
+    for folder_path in folder_paths:
+        probabilistic_analysis(folder_path)
+
+def profile_main():
+    folder_paths = ['data_from_experiment/perfil/perfil_jus', 'data_from_experiment/perfil/perfil_mon']
+    for folder_path in folder_paths:
+        profile_analysis(folder_path)
+
+def main():
+    temporal_main()
+    probabilistic_main()
+    profile_main()
+
+if __name__ == "__main__":
+    # Call the main function for each program
+    temporal_main()
+    probabilistic_main()
+    profile_main()
+
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/temporal_analysis/low_reynolds.py
+
+
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/temporal_analysis/high_reynolds.py
+
+
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/probabilistic_analysis/point5_probabilistic.py
+
+
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/profile_analysis/jusante.py
+
+
+
+# File: /home/lucadg911/TurbulenceAnalysis_python/profile_analysis/montante.py
+
